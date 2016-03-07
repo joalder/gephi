@@ -109,6 +109,7 @@ public class EdgeListPanel extends javax.swing.JPanel {
                 chooser.setDialogTitle(NbBundle.getMessage(EdgeListPanel.class, "EdgeListPanel.sqliteFileChooser.title"));
                 DialogFileFilter dialogFileFilter = new DialogFileFilter(NbBundle.getMessage(EdgeListPanel.class, "EdgeListPanel.sqliteFileChooser.filefilter"));
                 dialogFileFilter.addExtension("sqlite");
+                dialogFileFilter.addExtension("neo4j");
                 dialogFileFilter.addExtension("db");
                 chooser.addChoosableFileFilter(dialogFileFilter);
 
@@ -165,6 +166,20 @@ public class EdgeListPanel extends javax.swing.JPanel {
                     dbTextField.setText("");
                     portTextField.setText("");
                     browseButton.setVisible(true);
+                } else if(driver != null && driver.getPrefix().equals("neo4j")){
+                    hostLabel.setText(NbBundle.getMessage(EdgeListPanel.class, "EdgeListPanel.hostLabel.text"));
+                    portTextField.setEnabled(true);
+                    portLabel.setEnabled(true);
+                    dbLabel.setEnabled(false);
+                    dbTextField.setEnabled(false);
+                    userLabel.setEnabled(false);
+                    userTextField.setEnabled(false);
+                    pwdLabel.setEnabled(false);
+                    pwdTextField.setEnabled(false);
+                    pwdTextField.setText("");
+                    userTextField.setText("");
+                    dbTextField.setText("");
+                    browseButton.setVisible(false);
                 } else {
                     hostLabel.setText(NbBundle.getMessage(EdgeListPanel.class, "EdgeListPanel.hostLabel.text"));
                     portTextField.setEnabled(true);
@@ -630,6 +645,10 @@ public class EdgeListPanel extends javax.swing.JPanel {
         return panel.getSelectedSQLDriver().getPrefix().equals("sqlite");
     }
 
+    private static boolean isNeo4J(EdgeListPanel panel){
+        return panel.getSelectedSQLDriver().getPrefix().equals("neo4j");
+    }
+
     private static class NotEmptyValidator implements Validator<String> {
 
         private EdgeListPanel panel;
@@ -643,7 +662,7 @@ public class EdgeListPanel extends javax.swing.JPanel {
             if (!panel.inited) {
                 return true;
             }
-            if (isSqlite(panel)) {
+            if (isSqlite(panel) || isNeo4J(panel)) {
                 return true;
             } else {
                 return Validators.REQUIRE_NON_EMPTY_STRING.validate(problems, compName, model);
